@@ -292,7 +292,7 @@ export default function HomePage() {
       </div>
 
       {/* Call to Action Section */}
-      <div className="py-56 bg-gradient-to-r from-brand-600 to-brand-700 dark:from-brand-500 dark:to-brand-600 text-white text-center">
+      <div className="py-56 bg-gradient-to-r from-brand-600 to-brand-700 dark:from-brand-700 dark:to-brand-900 text-white text-center">
         <div className="container mx-auto max-w-4xl">
           <h2 className="text-5xl font-bold mb-4 animate-fade-in">
             Take Control of Your Health Today
