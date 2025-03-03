@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { medicalHistory } from "@/app/dashboard/history/page";
+import { medicalHistory } from "@/app/(root)/dashboard/history/page";
 
 // Mock function to fetch a single record (replace with actual data fetching)
 const getRecordById = (id: number) => {

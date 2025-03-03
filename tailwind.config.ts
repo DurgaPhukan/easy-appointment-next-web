@@ -51,18 +51,60 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // brand: {
+        //   50: "#f0fdf4",  // Lightest shade
+        //   100: "#dcfce7",
+        //   200: "#bbf7d0",
+        //   300: "#86efac",
+        //   400: "#4ade80",  // Lighter shade
+        //   500: "#22c55e",  // Main color
+        //   600: "#16a34a",  // Darker shade
+        //   700: "#15803d",
+        //   800: "#166534",  // Even darker
+        //   900: "#14532d",
+        //   950: "#052e16",  // Darkest shade
+        // },
+
+
         brand: {
-          50: "#f0fdf4",  // Lightest shade
-          100: "#dcfce7",
-          200: "#bbf7d0",
-          300: "#86efac",
-          400: "#4ade80",  // Lighter shade
-          500: "#22c55e",  // Main color
-          600: "#16a34a",  // Darker shade
-          700: "#15803d",
-          800: "#166534",  // Even darker
-          900: "#14532d",
-          950: "#052e16",  // Darkest shade
+          // Primary Blue based on #0052b2 - Trustworthy, professional, calm
+          50: "#f0f6ff",   // Lightest shade - backgrounds
+          100: "#e0eeff",  // Light shade - subtle backgrounds, borders
+          200: "#c0daff",  // Light accent elements
+          300: "#94bfff",  // Secondary elements
+          400: "#659eff",  // Highlights
+          500: "#3d7df7",  // Brighter primary - active states
+          600: "#0052b2",  // Primary brand color - buttons, important elements
+          700: "#004499",  // Darker primary - hover states, focus
+          800: "#003780",  // Very dark accent
+          900: "#002d66",  // Footer backgrounds, dark sections
+          950: "#001f47",  // Darkest shade - dark mode backgrounds
+
+          // Enhanced accent colors that complement #0052b2
+          teal: {
+            100: "#e0f7f8",
+            400: "#00b1c2",
+            600: "#008999",
+          },
+
+          coral: {
+            100: "#ffede8",
+            400: "#ff7961",
+            600: "#e54e3d",
+          },
+
+          lavender: {
+            100: "#f3f0ff",
+            400: "#9c82e3",
+            600: "#7655d6",
+          },
+
+          // Additional complementary accent (gold/amber)
+          amber: {
+            100: "#fff8e0",
+            400: "#ffbb38",
+            600: "#e59c00",
+          }
         },
       },
       borderRadius: {

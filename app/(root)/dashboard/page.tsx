@@ -1,6 +1,4 @@
-// src/app/(dashboard)/page.tsx
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-// import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, PlusCircle, User } from "lucide-react";
