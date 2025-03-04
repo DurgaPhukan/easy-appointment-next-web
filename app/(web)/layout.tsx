@@ -1,3 +1,5 @@
+import { QueryProvider } from "../components/QueryProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -5,8 +7,7 @@ export default function RootLayout({
 }>) {
   return (
     <div>
-
-      {children}
+      <QueryProvider>{children}</QueryProvider>
     </div>
   );
 }

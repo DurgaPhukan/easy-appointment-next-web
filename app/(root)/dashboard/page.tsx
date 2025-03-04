@@ -1,4 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, PlusCircle, User } from "lucide-react";
@@ -6,7 +12,7 @@ import UpcomingAppointments from "../upcoming-appointments/page";
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-[86%] md:w-full">
       <div className="page-header">
         <h1 className="page-title">Dashboard</h1>
         <p className="page-description">
@@ -14,7 +20,7 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      <div className="w-[95%] md:w-full grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="w-full grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">
@@ -62,9 +68,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">2</div>
-            <p className="text-xs text-muted-foreground">
-              Updated 2 days ago
-            </p>
+            <p className="text-xs text-muted-foreground">Updated 2 days ago</p>
           </CardContent>
         </Card>
       </div>
@@ -95,19 +99,37 @@ export default function DashboardPage() {
                 Book New Appointment
               </Link>
             </Button>
-            <Button asChild variant="outline" className="w-full justify-start" size="lg">
-              <Link href="/dashboard/appointments" className="flex items-center">
+            <Button
+              asChild
+              variant="outline"
+              className="w-full justify-start"
+              size="lg"
+            >
+              <Link
+                href="/dashboard/appointments"
+                className="flex items-center"
+              >
                 <Calendar className="mr-2 h-5 w-5" />
                 View All Appointments
               </Link>
             </Button>
-            <Button asChild variant="outline" className="w-full justify-start" size="lg">
+            <Button
+              asChild
+              variant="outline"
+              className="w-full justify-start"
+              size="lg"
+            >
               <Link href="/dashboard/profile" className="flex items-center">
                 <User className="mr-2 h-5 w-5" />
                 Update Profile
               </Link>
             </Button>
-            <Button asChild variant="outline" className="w-full justify-start" size="lg">
+            <Button
+              asChild
+              variant="outline"
+              className="w-full justify-start"
+              size="lg"
+            >
               <Link href="/dashboard/history" className="flex items-center">
                 <Clock className="mr-2 h-5 w-5" />
                 Medical History

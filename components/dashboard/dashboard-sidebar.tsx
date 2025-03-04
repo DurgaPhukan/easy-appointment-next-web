@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -8,6 +7,7 @@ import {
   Calendar,
   Clock,
   User,
+  Users,
   Home,
   Settings,
   CreditCard,
@@ -60,6 +60,11 @@ export function DashboardSidebar({ className, ...props }: SidebarNavProps) {
       href: "/dashboard/settings",
       title: "Settings",
       icon: <Settings className="h-5 w-5" />,
+    },
+    {
+      href: "/dashboard/users",
+      title: "Users",
+      icon: <Users className="h-5 w-5" />,
     },
   ];
 
