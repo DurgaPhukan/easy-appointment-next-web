@@ -97,7 +97,7 @@ export default function BookingPage() {
   ];
 
   return (
-    <div className="app-container">
+    <div className="">
       <div className="page-header">
         <h1 className="page-title">Book an Appointment</h1>
         <p className="page-description">

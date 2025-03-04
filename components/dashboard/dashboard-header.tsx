@@ -20,12 +20,12 @@ export function DashboardHeader() {
     <header className="sticky top-0 z-50 flex h-16 items-center border-b bg-background px-4 md:px-6">
       <div className="flex items-center gap-2 md:hidden">
         <Sheet>
-          <SheetTrigger asChild>
+          {/* <SheetTrigger asChild>
             <Button variant="outline" size="icon">
               <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle navigation menu</span>
             </Button>
-          </SheetTrigger>
+          </SheetTrigger> */}
           <SheetContent side="left" className="w-72 p-0">
             <DashboardSidebar />
           </SheetContent>
@@ -46,7 +46,7 @@ export function DashboardHeader() {
           >
             <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
           </svg>
-          <span className="text-lg font-semibold">Easy Appointment</span>
+          <span className="text-lg font-semibold text-brand-700 dark:text-white">Easy Appointment</span>
         </Link>
       </div>
 

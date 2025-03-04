@@ -1,10 +1,5 @@
-// import { Button } from "@/components/ui/button";
-// import { Calendar, Heart, Stethoscope, Users, Star, MessageCircle, Shield } from "lucide-react";
-// import Image from "next/image";
-// import Link from "next/link";
-
 "use client"
-
+import InstantThemeChangerBtn from "@/components/InstantThemeChangerBtn";
 import { Button } from "@/components/ui/button";
 import { Calendar, Heart, Stethoscope, Users, Star, MessageCircle, Shield, CheckCircle, Clock, Award, Briefcase, Phone, Mail } from "lucide-react";
 import Link from "next/link";
@@ -12,19 +7,24 @@ import Link from "next/link";
 export default function HomePage() {
   return (
     <div className="bg-background min-h-screen relative">
-      {/* Hero Section with Gradient */}
-      <div className="relative h-screen flex items-center justify-center text-center overflow-hidden bg-gradient-to-r from-brand-700 via-brand-100 to-brand-700 dark:from-brand-950 dark:via-black dark:to-brand-950">
+      <InstantThemeChangerBtn />
+      <div className="relative h-screen flex items-center justify-center text-center overflow-hidden bg-gradient-to-r from-brand-900 via-brand-300 to-brand-900 dark:from-brand-950 dark:via-black dark:to-brand-950">
         <div className="relative z-10 space-y-6 max-w-4xl px-4">
-          <div className="mb-4 flex justify-center">
+          <div className="mb-4 flex justify-center items-center gap-4">
             <div className="p-3 bg-white dark:bg-brand-950 rounded-full shadow-lg">
               <Heart className="h-10 w-10 text-brand-600 dark:text-brand-100" />
             </div>
+            <h1
+              className="text-5xl font-bold text-brand-950 dark:text-brand-50"
+            >
+              Health~Point
+            </h1>
           </div>
           <h1 className="text-7xl md:text-7xl font-bold animate-fade-in text-brand-950 dark:text-brand-50">
             Your Health, Our Priority
           </h1>
           <p className="text-xl font-light text-brand-800 dark:text-brand-200 animate-fade-in delay-100 max-w-2xl mx-auto">
-            Experience healthcare reimagined. Our platform connects you with leading medical professionals for personalized care when you need it most.
+            Experience healthcare re-imagined. Our platform connects you with leading medical professionals for personalized care when you need it most.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in delay-200">
             <Button asChild size="lg" className="bg-white text-brand-700 hover:bg-brand-100 shadow-md">

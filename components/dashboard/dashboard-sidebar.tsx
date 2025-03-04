@@ -1,4 +1,3 @@
-// src/components/dashboard/dashboard-sidebar.tsx
 "use client";
 
 import Link from "next/link";
@@ -30,7 +29,7 @@ export function DashboardSidebar({ className, ...props }: SidebarNavProps) {
     {
       href: "/dashboard",
       title: "Dashboard",
-      icon: <Home className="h-5 w-5" />,
+      icon: <Home className="h-5  w-5" />,
     },
     {
       href: "/dashboard/appointments",
@@ -67,7 +66,7 @@ export function DashboardSidebar({ className, ...props }: SidebarNavProps) {
   return (
     <nav
       className={cn(
-        "flex h-screen w-60 flex-col border-r bg-background p-4",
+        "flex h-screen w-16 md:w-60 flex-col border-r bg-background p-2 md:p-4",
         className
       )}
       {...props}
@@ -87,7 +86,9 @@ export function DashboardSidebar({ className, ...props }: SidebarNavProps) {
           >
             <Link href={item.href} className="flex items-center gap-3">
               {item.icon}
-              {item.title}
+              <p className="hidden md:block">
+                {item.title}
+              </p>
             </Link>
           </Button>
         ))}

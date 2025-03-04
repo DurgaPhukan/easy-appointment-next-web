@@ -45,7 +45,7 @@ export default function UpcomingAppointments() {
         <Card key={appointment.id} className="overflow-hidden">
           <CardContent className="p-0">
             <div className="flex flex-col sm:flex-row">
-              <div className="flex items-center gap-4 border-b p-4 sm:border-b-0 sm:border-r sm:p-6">
+              <div className="flex w-72 items-center gap-4 border-b p-4 sm:border-b-0 sm:border-r sm:p-6">
                 <Avatar className="h-14 w-14">
                   <AvatarImage src={appointment.avatar} alt={appointment.doctorName} />
                   <AvatarFallback>

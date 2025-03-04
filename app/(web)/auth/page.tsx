@@ -11,6 +11,7 @@ import { ArrowRight, Mail, Lock, User, KeyIcon, EyeOff, Eye, Moon, Sun, Heart } 
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
+import InstantThemeChangerBtn from "@/components/InstantThemeChangerBtn";
 
 export default function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -36,28 +37,13 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-r from-brand-700 via-brand-100 to-brand-700 dark:from-brand-950 dark:via-black dark:to-brand-950 relative overflow-hidden">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-r from-brand-900 via-brand-300 to-brand-900 dark:from-brand-950 dark:via-black dark:to-brand-950 relative overflow-hidden">
       {/* Decorative elements to match homepage */}
       <div className="absolute top-1/4 left-10 h-24 w-24 rounded-full bg-brand-400 dark:bg-brand-700 opacity-40 animate-float delay-100"></div>
       <div className="absolute bottom-1/4 right-10 h-20 w-20 rounded-full bg-brand-500 dark:bg-brand-700 opacity-40 animate-float delay-300"></div>
       <div className="absolute top-1/3 right-1/4 h-16 w-16 rounded-full bg-brand-200 dark:bg-brand-700 opacity-30 animate-float delay-700"></div>
 
-      {/* Theme toggle button */}
-      <button
-        onClick={toggleTheme}
-        className="absolute top-6 right-6 p-2 rounded-full bg-white/80 dark:bg-brand-900 shadow-md hover:shadow-lg transition-all duration-300 z-10"
-      >
-        <motion.div
-          animate={{ rotate: theme === "dark" ? 180 : 0 }}
-          transition={{ duration: 0.6, type: "spring", stiffness: 200 }}
-        >
-          {theme === "dark" ? (
-            <Sun className="h-5 w-5 text-amber-400" />
-          ) : (
-            <Moon className="h-5 w-5 text-slate-700" />
-          )}
-        </motion.div>
-      </button>
+      <InstantThemeChangerBtn />
 
       <motion.div
         className="w-full max-w-lg z-10"
@@ -114,7 +100,7 @@ export default function AuthPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.7, ...springTransition }}
         >
-          <Card className="p-2 border-none shadow-lg bg-white  dark:bg-brand-900/80 backdrop-blur-sm transition-all duration-500">
+          <Card className="p-2 border-none shadow-lg bg-white  dark:bg-brand-950/60 backdrop-blur-sm transition-all duration-500">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <CardHeader className="pb-2">
                 <TabsList className="grid grid-cols-2 gap-1 h-12 w-full bg-brand-100 dark:bg-brand-800">
