@@ -18,6 +18,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
   CalendarIcon,
+  CheckCircle,
   Eye,
   EyeOff,
   Heart,
@@ -30,25 +31,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation"; // Updated import
 import React, { useEffect, useState } from "react";
 import GoogleOAuthButton from "./component/GoogleOAuthButton";
-// import DatePicker from "react-datepicker";
-// import "react-datepicker/dist/react-datepicker.css";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
-import LocationPicker from "@/components/shared/LocationPicker";
-import { parse } from "date-fns";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface LoginFormData {
   email: string;
@@ -58,34 +46,24 @@ interface LoginFormData {
 interface RegisterFormData {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  dateOfBirth: Date;
-  gender: string;
-  address: string;
-  role: string;
 }
 
 export default function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
   const [activeTab, setActiveTab] = useState("login");
   const [mounted, setMounted] = useState(false);
   const [isLogin, setIsLogin] = useState<boolean>(true);
-  const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
-  const [date, setDate] = useState<Date | null>(null);
-  const [gender, setGender] = useState<string>("MALE");
-  const [role, setRole] = useState<string>("PATIENT");
+  // const [date, setDate] = useState<Date | null>(null);
   const router = useRouter();
   const { theme, setTheme } = useTheme();
-  const [address, setAddress] = React.useState("");
-  const [location, setLocation] = useState<{
-    lat: number;
-    lng: number;
-    address?: string;
-  } | null>(null);
-  const [inputValue, setInputValue] = React.useState("");
-  const autocompleteRef = React.useRef<HTMLInputElement>(null);
+
+  // email verify states
+  const [isVerified, setIsVerified] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [resendTimer, setResendTimer] = useState(30);
+  const [isResendDisabled, setIsResendDisabled] = useState(true);
 
   const saveAuthToken = (token: string) => {
     localStorage.setItem("authToken", token);
@@ -98,6 +76,9 @@ export default function AuthPage() {
       saveAuthToken(response.data.accessToken);
       router.push("/dashboard");
     },
+    onError: (error) => {
+      console.error("Login failed:", error);
+    },
   });
 
   const registerMutation = useMutation({
@@ -107,13 +88,56 @@ export default function AuthPage() {
       console.log("User Created Successfully", response);
       setIsLogin(true);
     },
+    onError: (error) => {
+      console.error("Registration failed:", error);
+    },
   });
+
+  const verifyEmailMutation = useMutation({
+    mutationFn: (email: string) =>
+      axios.post(`${process.env.NEXT_PUBLIC_BACK_END_URL}/auth/send-otp`, {
+        email,
+      }),
+    onSuccess: () => {
+      setEmail(email);
+      setIsModalOpen(true);
+      startResendTimer();
+    },
+  });
+
+  const verifyOtpMutation = useMutation({
+    mutationFn: ({ otp, email }: { otp: string; email: string }) =>
+      axios.post(`${process.env.NEXT_PUBLIC_BACK_END_URL}/auth/verify-otp`, {
+        otp,
+        email,
+      }),
+    onSuccess: () => {
+      setIsVerified(true);
+      setIsModalOpen(false);
+      setResendTimer(30);
+      setIsResendDisabled(true);
+    },
+  });
+
+  const startResendTimer = () => {
+    setIsResendDisabled(true);
+    let timeLeft = 30;
+    setResendTimer(timeLeft);
+    const interval = setInterval(() => {
+      timeLeft -= 1;
+      setResendTimer(timeLeft);
+      if (timeLeft === 0) {
+        clearInterval(interval);
+        setIsResendDisabled(false);
+      }
+    }, 1000);
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     try {
       if (token) {
-        const payload = JSON.parse(atob(token.split(".")[1])); // Decode JWT payload
+        const payload = JSON.parse(atob(token.split(".")[1]));
         if (payload.exp * 1000 > Date.now()) {
           router.push("/dashboard");
         } else {
@@ -123,11 +147,11 @@ export default function AuthPage() {
     } catch (error) {
       console.log("Error !", error);
     }
-  }, [router]);
+  }, []);
 
-  // Fix hydration issues
   useEffect(() => {
     setMounted(true);
+    return () => setMounted(false);
   }, []);
 
   if (!mounted) return null;
@@ -147,44 +171,35 @@ export default function AuthPage() {
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-    loginMutation.mutate({ email, password });
+    loginMutation.mutate(
+      { email, password },
+      {
+        onError: (error) => {
+          console.error("Login failed:", error);
+        },
+      }
+    );
   };
 
-  // Handle Register
   const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
-    const firstName = formData.get("firstName") as string;
-    const lastName = formData.get("lastName") as string;
-    const phone = formData.get("phone") as string;
-    const address = formData.get("address") as string;
-
     const data: RegisterFormData = {
       email,
       password: formData.get("password") as string,
-      firstName,
-      lastName,
-      phone,
-      dateOfBirth: dateOfBirth!,
-      gender,
-      address,
-      role,
     };
 
-    registerMutation.mutate(data);
+    registerMutation.mutate(data, {
+      onError: (error) => {
+        console.error("Registration failed:", error);
+      },
+    });
   };
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
-    const parsedDate = parse(event.target.value, "dd/MM/yyyy", new Date());
-    if (!isNaN(parsedDate.getTime())) {
-      setDate(parsedDate);
-    }
-  };
-
-  const handleLocationSelect = (lat: number, lon: number) => {
-    console.log("Selected Location:", { lat, lon });
+  const handleEmailVerification = () => {
+    const email = (document.getElementById("email") as HTMLInputElement).value;
+    verifyEmailMutation.mutate(email);
   };
 
   return (
@@ -409,42 +424,7 @@ export default function AuthPage() {
                           onSubmit={handleRegister}
                           className="flex flex-col gap-4"
                         >
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="firstName"
-                              className="text-brand-700 dark:text-brand-300"
-                            >
-                              First Name
-                            </Label>
-                            <div className="relative">
-                              <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-500 dark:text-brand-400" />
-                              <Input
-                                id="firstName"
-                                name="firstName"
-                                placeholder="John"
-                                className="pl-10 transition-all duration-300 border-brand-200 dark:border-brand-700 focus:border-brand-600 focus:ring-2 focus:ring-brand-500/20"
-                              />
-                            </div>
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="lastName"
-                              className="text-brand-700 dark:text-brand-300"
-                            >
-                              Last Name
-                            </Label>
-                            <div className="relative">
-                              <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-500 dark:text-brand-400" />
-                              <Input
-                                id="lastName"
-                                name="lastName"
-                                placeholder="Doe"
-                                className="pl-10 transition-all duration-300 border-brand-200 dark:border-brand-700 focus:border-brand-600 focus:ring-2 focus:ring-brand-500/20"
-                              />
-                            </div>
-                          </div>
-
+                          {/* email part */}
                           <div className="space-y-2">
                             <Label
                               htmlFor="email"
@@ -452,16 +432,71 @@ export default function AuthPage() {
                             >
                               Email
                             </Label>
-                            <div className="relative">
+                            <div className="relative flex items-center gap-2">
                               <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-500 dark:text-brand-400" />
                               <Input
                                 id="email"
                                 name="email"
                                 placeholder="name@example.com"
                                 type="email"
-                                className="pl-10 transition-all duration-300 border-brand-200 dark:border-brand-700 focus:border-brand-600 focus:ring-2 focus:ring-brand-500/20"
+                                className="pl-10 flex-1 transition-all duration-300 border-brand-200 dark:border-brand-700 focus:border-brand-600 focus:ring-2 focus:ring-brand-500/20"
+                                disabled={isVerified}
                               />
+                              {isVerified ? (
+                                <CheckCircle className="text-green-500 h-5 w-5" />
+                              ) : (
+                                <Button
+                                  size="sm"
+                                  onClick={handleEmailVerification}
+                                >
+                                  Verify
+                                </Button>
+                              )}
                             </div>
+                            <Dialog
+                              open={isModalOpen}
+                              onOpenChange={(open) => {
+                                if (!open && !isVerified) {
+                                  setIsModalOpen(false);
+                                }
+                              }}
+                            >
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>
+                                    Enter the 6-digit OTP
+                                  </DialogTitle>
+                                </DialogHeader>
+                                <Input
+                                  value={otp}
+                                  onChange={(e) => setOtp(e.target.value)}
+                                  maxLength={6}
+                                  className="text-center tracking-widest text-lg"
+                                />
+                                <div className="flex justify-between items-center mt-4">
+                                  <Button
+                                    size="sm"
+                                    onClick={() =>
+                                      verifyOtpMutation.mutate({ otp, email })
+                                    }
+                                    disabled={otp.length !== 6}
+                                  >
+                                    Submit
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={handleEmailVerification}
+                                    disabled={isResendDisabled}
+                                  >
+                                    Resend OTP{" "}
+                                    {isResendDisabled
+                                      ? `(${resendTimer}s)`
+                                      : ""}
+                                  </Button>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
                           </div>
 
                           <div className="space-y-2">
@@ -493,143 +528,6 @@ export default function AuthPage() {
                                 )}
                               </motion.button>
                             </div>
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="phone"
-                              className="text-brand-700 dark:text-brand-300"
-                            >
-                              Phone Number
-                            </Label>
-                            <div className="relative">
-                              <Input
-                                id="phone"
-                                name="phone"
-                                placeholder="123-456-7890"
-                                type="tel"
-                                className="pl-10 transition-all duration-300 border-brand-200 dark:border-brand-700 focus:border-brand-600 focus:ring-2 focus:ring-brand-500/20"
-                              />
-                            </div>
-                          </div>
-
-                          {/* <div className="space-y-2">
-                            <label
-                              htmlFor="dateOfBirth"
-                              className="text-brand-700 dark:text-brand-300"
-                            >
-                              Date of Birth
-                            </label>
-                            <input
-                              type="text"
-                              placeholder="DD/MM/YYYY"
-                              value={inputValue}
-                              onChange={handleInputChange}
-                              className="w-full p-2 border border-brand-200 dark:border-brand-700 rounded-md"
-                            />
-                            <Popover>
-                              <PopoverTrigger asChild>
-                                <Button
-                                  variant={"outline"}
-                                  className={cn(
-                                    "w-full justify-start text-left font-normal",
-                                    !date && "text-muted-foreground"
-                                  )}
-                                >
-                                  <CalendarIcon className="mr-2 h-4 w-4" />
-                                  {date ? (
-                                    format(date, "PPP")
-                                  ) : (
-                                    <span>Pick a date</span>
-                                  )}
-                                </Button>
-                              </PopoverTrigger>
-                              <PopoverContent
-                                className="w-auto p-0"
-                                align="start"
-                              >
-                                <Calendar
-                                  mode="single"
-                                  selected={date}
-                                  onSelect={setDate}
-                                  initialFocus
-                                />
-                              </PopoverContent>
-                            </Popover>
-                          </div> */}
-
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="gender"
-                              className="text-brand-700 dark:text-brand-300"
-                            >
-                              Gender
-                            </Label>
-                            <RadioGroup
-                              value={gender}
-                              onValueChange={setGender}
-                              className="flex space-x-4"
-                            >
-                              <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="MALE" id="male" />
-                                <Label htmlFor="male">Male</Label>
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="FEMALE" id="female" />
-                                <Label htmlFor="female">Female</Label>
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="OTHERS" id="others" />
-                                <Label htmlFor="others">Others</Label>
-                              </div>
-                            </RadioGroup>
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="role"
-                              className="text-brand-700 dark:text-brand-300"
-                            >
-                              Role
-                            </Label>
-                            <Select value={role} onValueChange={setRole}>
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select Role" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="PATIENT">Patient</SelectItem>
-                                <SelectItem value="DOCTOR">Doctor</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-
-                          {/* <div className="space-y-2">
-                            <Label
-                              htmlFor="address"
-                              className="text-brand-700 dark:text-brand-300"
-                            >
-                              Address
-                            </Label>
-                            <Input
-                              id="address"
-                              name="address"
-                              placeholder="Enter your address"
-                              className="pl-10 transition-all duration-300 border-brand-200 dark:border-brand-700 focus:border-brand-600 focus:ring-2 focus:ring-brand-500/20"
-                            />
-                          </div> */}
-
-                          {/* <div className="p-5">
-                            <h1 className="text-xl font-semibold">
-                              Select a Location
-                            </h1>
-                            <LocationPicker onSelect={handleLocationSelect} />
-                          </div> */}
-
-                          <div>
-                            <h2>Select Your Location</h2>
-                            <LocationPicker
-                              onLocationSelect={handleLocationSelect}
-                            />
                           </div>
 
                           <div className="flex items-center space-x-2">
